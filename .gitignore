@@ -1,0 +1,69 @@
+# Source audit files and Office artifacts
+*.xlsx
+*.xlsm
+*.xls
+*.xlsb
+*.xltx
+*.xltm
+*.docx
+*.docm
+*.pdf
+*.csv
+*.tsv
+~$*
+
+# Local project data, mappings, reports, and exports
+/input/
+/inputs/
+/data/
+/local-data/
+/projects/
+/exports/
+/output/
+/outputs/
+/.private/
+/mappings/
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.log
+*.zip
+
+# Credentials and environment
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Python and build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# .NET and Visual Studio
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+TestResults/
+artifacts/
+BenchmarkDotNet.Artifacts/

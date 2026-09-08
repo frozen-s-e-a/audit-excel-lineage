@@ -1,0 +1,476 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^PKG_[A-Z0-9_]+$"
+    },
+    "values_included": {
+      "const": false
+    },
+    "completeness": {
+      "enum": [
+        "complete",
+        "incomplete"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "workbooks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/workbook"
+      },
+      "minItems": 1
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "minItems": 1
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      },
+      "minItems": 0
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/parameter"
+      },
+      "minItems": 0
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "package_id",
+    "values_included",
+    "completeness",
+    "scope",
+    "workbooks",
+    "nodes",
+    "edges",
+    "parameters",
+    "issues"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Audit Excel Lineage: sanitized single-file logic package",
+  "description": "Structural validation only. Privacy review, expression parsing, identifier uniqueness and graph integrity are separate application requirements.",
+  "$defs": {
+    "location": {
+      "type": "object",
+      "properties": {
+        "workbook_id": {
+          "type": "string",
+          "pattern": "^WB[0-9]{3,}$"
+        },
+        "sheet_id": {
+          "type": "string",
+          "pattern": "^S[0-9]{3,}$"
+        },
+        "address": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "workbook_id",
+        "sheet_id",
+        "address"
+      ],
+      "additionalProperties": false
+    },
+    "input_node": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "kind": {
+          "const": "input"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "data_type": {
+          "enum": [
+            "number",
+            "text",
+            "date",
+            "boolean",
+            "error",
+            "unknown"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "data_type",
+        "location"
+      ],
+      "additionalProperties": false
+    },
+    "range_node": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "kind": {
+          "const": "range"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "data_type": {
+          "enum": [
+            "number",
+            "text",
+            "date",
+            "boolean",
+            "error",
+            "unknown"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "data_type",
+        "location"
+      ],
+      "additionalProperties": false
+    },
+    "formula_node": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "kind": {
+          "const": "formula"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "data_type": {
+          "enum": [
+            "number",
+            "text",
+            "date",
+            "boolean",
+            "error",
+            "unknown"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "expression": {
+          "type": "string",
+          "pattern": "^=",
+          "maxLength": 32767
+        },
+        "parse_status": {
+          "enum": [
+            "parsed",
+            "dynamic_reference"
+          ]
+        },
+        "semantic_status": {
+          "enum": [
+            "confirmed",
+            "generic_alias"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "data_type",
+        "location",
+        "expression",
+        "parse_status",
+        "semantic_status"
+      ],
+      "additionalProperties": false
+    },
+    "unknown_node": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "kind": {
+          "const": "unknown"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "data_type": {
+          "enum": [
+            "number",
+            "text",
+            "date",
+            "boolean",
+            "error",
+            "unknown"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "reason": {
+          "enum": [
+            "unsupported_formula",
+            "dynamic_reference",
+            "external_missing",
+            "ambiguous_external",
+            "blocked_content",
+            "source_unknown",
+            "truncated_limit"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "data_type",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/input_node"
+        },
+        {
+          "$ref": "#/$defs/range_node"
+        },
+        {
+          "$ref": "#/$defs/formula_node"
+        },
+        {
+          "$ref": "#/$defs/unknown_node"
+        }
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "cell",
+            "range",
+            "name",
+            "other"
+          ]
+        },
+        "start_row_absolute": {
+          "type": "boolean"
+        },
+        "start_column_absolute": {
+          "type": "boolean"
+        },
+        "end_row_absolute": {
+          "type": "boolean"
+        },
+        "end_column_absolute": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "basis": {
+          "enum": [
+            "direct",
+            "potential",
+            "dynamic",
+            "unresolved"
+          ]
+        },
+        "reference": {
+          "$ref": "#/$defs/reference"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "basis",
+        "reference"
+      ],
+      "additionalProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^P_[A-Z0-9_]+$"
+        },
+        "data_type": {
+          "enum": [
+            "number",
+            "text",
+            "date",
+            "boolean",
+            "error",
+            "unknown"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "id",
+        "data_type",
+        "role"
+      ],
+      "additionalProperties": false
+    },
+    "issue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "unsupported_formula",
+            "dynamic_reference",
+            "external_missing",
+            "ambiguous_external",
+            "unsupported_file",
+            "file_changed",
+            "unconfirmed_semantics",
+            "blocked_content",
+            "truncated_limit"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "node_id": {
+          "type": "string",
+          "pattern": "^N_[A-Z0-9_]+$"
+        },
+        "workbook_id": {
+          "type": "string",
+          "pattern": "^WB[0-9]{3,}$"
+        }
+      },
+      "required": [
+        "code",
+        "severity"
+      ],
+      "additionalProperties": false
+    },
+    "sheet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^S[0-9]{3,}$"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "id",
+        "role"
+      ],
+      "additionalProperties": false
+    },
+    "workbook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^WB[0-9]{3,}$"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "sheets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sheet"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "sheets"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

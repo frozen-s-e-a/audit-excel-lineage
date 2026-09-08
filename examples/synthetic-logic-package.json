@@ -1,0 +1,149 @@
+{
+  "schema_version": "0.1.0",
+  "package_id": "PKG_SYNTHETIC_DEMO",
+  "values_included": false,
+  "completeness": "complete",
+  "scope": "从零虚构的单笔估值增值及 TT、附注引用示例，仅说明结构，不包含真实业务数据。",
+  "workbooks": [
+    {
+      "id": "WB001",
+      "role": "估值明细示例",
+      "sheets": [
+        {
+          "id": "S001",
+          "role": "估值明细"
+        }
+      ]
+    },
+    {
+      "id": "WB002",
+      "role": "TT 示例",
+      "sheets": [
+        {
+          "id": "S001",
+          "role": "TT 引用"
+        }
+      ]
+    },
+    {
+      "id": "WB003",
+      "role": "附注示例",
+      "sheets": [
+        {
+          "id": "S001",
+          "role": "附注引用"
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "N_MARKET",
+      "kind": "input",
+      "label": "市值",
+      "data_type": "number",
+      "location": {
+        "workbook_id": "WB001",
+        "sheet_id": "S001",
+        "address": "G12"
+      }
+    },
+    {
+      "id": "N_COST",
+      "kind": "input",
+      "label": "成本",
+      "data_type": "number",
+      "location": {
+        "workbook_id": "WB001",
+        "sheet_id": "S001",
+        "address": "H12"
+      }
+    },
+    {
+      "id": "N_GAIN",
+      "kind": "formula",
+      "label": "估值增值",
+      "data_type": "number",
+      "location": {
+        "workbook_id": "WB001",
+        "sheet_id": "S001",
+        "address": "I12"
+      },
+      "expression": "=N_MARKET-N_COST",
+      "parse_status": "parsed",
+      "semantic_status": "confirmed"
+    },
+    {
+      "id": "N_TT",
+      "kind": "formula",
+      "label": "估值增值引用",
+      "data_type": "number",
+      "location": {
+        "workbook_id": "WB002",
+        "sheet_id": "S001",
+        "address": "D20"
+      },
+      "expression": "=N_GAIN",
+      "parse_status": "parsed",
+      "semantic_status": "confirmed"
+    },
+    {
+      "id": "N_NOTE",
+      "kind": "formula",
+      "label": "附注引用",
+      "data_type": "number",
+      "location": {
+        "workbook_id": "WB003",
+        "sheet_id": "S001",
+        "address": "E8"
+      },
+      "expression": "=N_TT",
+      "parse_status": "parsed",
+      "semantic_status": "confirmed"
+    }
+  ],
+  "edges": [
+    {
+      "source": "N_MARKET",
+      "target": "N_GAIN",
+      "basis": "direct",
+      "reference": {
+        "kind": "cell",
+        "start_row_absolute": false,
+        "start_column_absolute": false
+      }
+    },
+    {
+      "source": "N_COST",
+      "target": "N_GAIN",
+      "basis": "direct",
+      "reference": {
+        "kind": "cell",
+        "start_row_absolute": false,
+        "start_column_absolute": false
+      }
+    },
+    {
+      "source": "N_GAIN",
+      "target": "N_TT",
+      "basis": "direct",
+      "reference": {
+        "kind": "cell",
+        "start_row_absolute": false,
+        "start_column_absolute": false
+      }
+    },
+    {
+      "source": "N_TT",
+      "target": "N_NOTE",
+      "basis": "direct",
+      "reference": {
+        "kind": "cell",
+        "start_row_absolute": false,
+        "start_column_absolute": false
+      }
+    }
+  ],
+  "parameters": [],
+  "issues": []
+}
