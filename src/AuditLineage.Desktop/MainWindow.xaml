@@ -1,0 +1,44 @@
+<Window x:Class="AuditLineage.Desktop.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Excel 数值处理 · 测试版 0.4" Width="950" Height="680" MinWidth="760" MinHeight="600"
+ Background="#F4F6FA" FontFamily="Microsoft YaHei UI" FontSize="14" Closing="Window_Closing">
+ <Grid Margin="28">
+  <Grid.RowDefinitions>
+   <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+   <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+  </Grid.RowDefinitions>
+  <StackPanel Grid.Row="0" Margin="0,0,0,18">
+   <TextBlock Text="Excel 数值处理" FontSize="27" FontWeight="SemiBold" Foreground="#15243A"/>
+   <TextBlock Text="批量替换数值 · 公式与文本保留 · 原文件只读" Margin="0,7,0,0" Foreground="#53627A"/>
+  </StackPanel>
+  <Border Grid.Row="1" Background="#FFF3D6" Padding="15" CornerRadius="8" Margin="0,0,0,18">
+   <TextBlock TextWrapping="Wrap" Foreground="#694B0B"
+    Text="仅处理工作表数值：替换为 0，移除公式的数值缓存。数值型日期和百分比也会变为 0。公式中的金额、文本、文件名及附属对象保留，输出不代表完整脱敏；Excel 打开后可能重新计算。"/>
+  </Border>
+  <StackPanel Grid.Row="2" Margin="0,0,0,14">
+   <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+    <Button x:Name="AddButton" Content="添加 Excel 文件" Click="Add_Click"/>
+    <Button x:Name="ClearButton" Content="清空列表" Click="Clear_Click"/>
+    <Button x:Name="FolderButton" Content="选择输出文件夹" Click="Folder_Click"/>
+   </StackPanel>
+   <TextBlock x:Name="OutputLabel" Text="输出文件夹：请选择" TextWrapping="Wrap" Foreground="#53627A"/>
+  </StackPanel>
+  <ListView Grid.Row="3" x:Name="FilesList" BorderThickness="0" Background="White"
+   ScrollViewer.HorizontalScrollBarVisibility="Auto" VirtualizingPanel.IsVirtualizing="True">
+   <ListView.View><GridView>
+    <GridViewColumn Header="文件" Width="325" DisplayMemberBinding="{Binding Name}"/>
+    <GridViewColumn Header="状态" Width="465" DisplayMemberBinding="{Binding Status}"/>
+   </GridView></ListView.View>
+  </ListView>
+  <StackPanel Grid.Row="4" Margin="0,16,0,16">
+   <ProgressBar x:Name="Progress" Height="7" Minimum="0" Maximum="100"/>
+   <TextBlock x:Name="StatusLabel" Text="支持 .xlsx / .xlsm；不支持 .xls / .xlsb、加密或数字签名文件。" Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#53627A"/>
+  </StackPanel>
+  <StackPanel Grid.Row="5" Orientation="Horizontal">
+   <Button x:Name="StartButton" Content="开始处理并另存" Click="Start_Click" Background="#225CD5" Foreground="White"/>
+   <Button x:Name="CancelButton" Content="取消" Click="Cancel_Click" IsEnabled="False"/>
+   <Button Content="打开输出文件夹" Click="OpenFolder_Click"/>
+  </StackPanel>
+ </Grid>
+</Window>

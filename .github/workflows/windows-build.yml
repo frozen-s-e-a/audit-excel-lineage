@@ -1,0 +1,45 @@
+name: Windows test build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Run synthetic regression checks
+        shell: pwsh
+        run: |
+          $env:AUDIT_SYNTHETIC_OUTPUT = Join-Path $env:RUNNER_TEMP 'audit-synthetic'
+          dotnet run --project tests/AuditLineage.Tests -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publish standalone Windows x64 application
+        run: dotnet publish src/AuditLineage.Desktop -c Release -r win-x64 --self-contained true -o artifacts/windows-x64 -p:PublishSingleFile=false
+      - name: Verify executable starts
+        shell: pwsh
+        run: |
+          $app = Start-Process -FilePath (Join-Path $PWD 'artifacts/windows-x64/AuditLineage.exe') -PassThru
+          Start-Sleep -Seconds 5
+          if ($app.HasExited) { throw 'Application exited during startup smoke check.' }
+          Stop-Process -Id $app.Id
+      - name: Include guide and synthetic workbook pair
+        shell: pwsh
+        run: |
+          Copy-Item docs/QUICK_START.md artifacts/windows-x64/READ_ME.md
+          Copy-Item "$env:RUNNER_TEMP/audit-synthetic" artifacts/windows-x64/synthetic -Recurse
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AuditLineage-Windows-x64
+          path: artifacts/windows-x64/
+          retention-days: 30
+          if-no-files-found: error
